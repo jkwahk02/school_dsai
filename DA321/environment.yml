@@ -1,0 +1,66 @@
+# DA321 course environment — for local Anaconda/Miniconda
+# Create:    conda env create -f environment.yml
+# Activate:  conda activate da321
+# Launch:    jupyter lab
+#
+# If installation is slow or blocked (China), set the mirrors first (see SETUP.md).
+
+name: da321
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+
+  # --- Core data stack ---
+  - pandas<2.2       # pandas 2.2 changed internals that break joypy (ridgeline plots)
+  - numpy<2          # numpy 2.0 breaks native ABI of older pip packages (ortools DLL, geneticalgorithm, ...)
+  - scipy
+  - scikit-learn<1.6      # factor_analyzer uses the old check_array(force_all_finite=...) API
+  - statsmodels
+  - openpyxl         # needed for pandas .xlsx read/write (Excel export cells)
+
+  # --- Visualization ---
+  - matplotlib
+  - seaborn
+  - plotly
+  - wordcloud
+
+  # --- Geospatial (includes GDAL; very hard to install via pip) ---
+  - geopandas
+  - rasterio
+  - shapely
+  - folium
+
+  # --- Graph / network (needs system graphviz) ---
+  - networkx
+  - graphviz
+  - pygraphviz
+  - pydot
+
+  # --- Utilities ---
+  - requests
+  - tqdm
+  - tabulate
+  - pillow
+
+  # --- Jupyter runtime ---
+  - jupyterlab
+  - notebook
+  - ipython
+  - ipywidgets
+
+  # --- Not on conda-forge, or easier via pip ---
+  - pip
+  - pip:
+      - pyarrow        # pip build is self-contained; the conda-forge build pulls libabseil/libprotobuf
+                       # that clash with OR-Tools' bundled Abseil (WinError 127). Keep pyarrow on pip.
+      - factor_analyzer
+      - scikit-posthocs
+      - joypy
+      - bumplot
+      - stemgraphic
+      - pulp
+      - ortools
+      - geneticalgorithm
+      # kagglehub is intentionally omitted: Kaggle is unreliable/blocked in China.
+      # Ship all data inside the repo's data/ folder instead (see SETUP.md).
